@@ -33,7 +33,7 @@
         "views/payment_views.xml",
         "views/price_views.xml",
         "views/menu_views.xml",
-        "wizard/select_books_views.xml",
+#         "wizard/select_books_views.xml",
         "data/cron.xml",
         "data/mail.xml",
         "data/library_data.xml",
