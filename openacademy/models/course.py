@@ -16,7 +16,7 @@ class Course(models.Model):
 
     session_ids = fields.One2many('openacademy.session', 'course_id', string="Sessions")
 
-    level = fields.Selection([(1, 'Easy'), (2, 'Medium'), (3, 'Hard')], string="Difficulty Level")
+    level = fields.Selection([('easy', 'Easy'), ('medium', 'Medium'), ('hard', 'Hard')], string="Difficulty Level")
     session_count = fields.Integer(compute="_compute_session_count")
     attendee_count = fields.Integer(compute="_compute_attendee_count")
 
@@ -32,7 +32,6 @@ class Course(models.Model):
     def _compute_can_edit_responsible(self):
         self.can_edit_responsible = self.env.user.has_group('openacademy.group_archmaesters')
 
-    @api.multi
     def copy(self, default=None):
         default = dict(default or {})
 
@@ -148,19 +147,16 @@ class Session(models.Model):
                 end_date = fields.Datetime.from_string(session.end_date)
                 session.duration = (end_date - start_date).days + 1
 
-    @api.multi
     def action_draft(self):
         for rec in self:
             rec.state = 'draft'
             rec.message_post(body="Session %s of the course %s reset to draft" % (rec.name, rec.course_id.name))
 
-    @api.multi
     def action_confirm(self):
         for rec in self:
             rec.state = 'confirmed'
             rec.message_post(body="Session %s of the course %s confirmed" % (rec.name, rec.course_id.name))
 
-    @api.multi
     def action_done(self):
         for rec in self:
             rec.state = 'done'
@@ -171,7 +167,6 @@ class Session(models.Model):
             if rec.taken_seats >= 50.0 and rec.state == 'draft':
                 rec.action_confirm()
 
-    @api.multi
     def write(self, vals):
         res = super(Session, self).write(vals)
         for rec in self:
@@ -180,7 +175,6 @@ class Session(models.Model):
             self.message_subscribe([vals['instructor_id']])
         return res
 
-    @api.model
     def create(self, vals):
         res = super(Session, self).create(vals)
         res._auto_transition()
