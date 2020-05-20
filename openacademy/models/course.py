@@ -45,7 +45,6 @@ class Course(models.Model):
         default['name'] = new_name
         return super(Course, self).copy(default)
 
-    @api.multi
     def open_attendees(self):
         self.ensure_one()
         attendee_ids = self.session_ids.mapped('attendee_ids')
