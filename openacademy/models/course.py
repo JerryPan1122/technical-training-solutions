@@ -170,13 +170,13 @@ class Session(models.Model):
         res = super(Session, self).write(vals)
         for rec in self:
             rec._auto_transition()
-        if vals.get('instructor_id'):
+        if isinstance(vals, dict) and vals.get('instructor_id'):
             self.message_subscribe([vals['instructor_id']])
         return res
 
     def create(self, vals):
         res = super(Session, self).create(vals)
         res._auto_transition()
-        if vals.get('instructor_id'):
+        if isinstance(vals, dict) and vals.get('instructor_id'):
             res.message_subscribe([vals['instructor_id']])
         return res
